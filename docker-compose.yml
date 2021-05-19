@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+    nodejs-app:
+        build:
+          context: ./nodedocker_app
+        container_name: nodejsserver
+        hostname: nodejsserver
+        ports:
+            - "3000:3000" 
+        networks:
+            - example-net
+
+        depends_on:
+            - mongo
+    mongo:
+        container_name: mongo
+        image: mongo
+        volumes:
+            - ./data:/data/db
+        ports:
+            - "27017:27017" 
+        networks:
+            - example-net 
+    nginx:
+        build:
+          context: ./nginx
+        container_name: nginx
+        hostname: nginx
+        ports:
+            - "80:80" 
+        depends_on:
+            - nodejs-app
+        networks:
+            - example-net
+
+networks:
+  example-net:
+    external: true
